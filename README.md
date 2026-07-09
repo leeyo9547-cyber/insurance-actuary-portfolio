@@ -31,7 +31,6 @@ Portfolio for actuarial and insurance data analysis projects using Excel, SQL, S
 |09_Financial_Engineering|금융공학 기초|
 |Final_Project|통합 프로젝트|
 
-This repository is continuously updated.
----
+
 
 This repository is continuously updated.
