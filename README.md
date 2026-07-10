@@ -1,6 +1,5 @@
 # insurance-actuary-portfolio
 Portfolio for actuarial and insurance data analysis projects using Excel, SQL, SAS, Python, and IFRS17.
-# Insurance Actuary Portfolio
 
 보험계리 직무를 목표로 Excel, VBA, SQL, SAS, Python 및 IFRS17/K-ICS를 학습하며 수행한 실습과 프로젝트를 정리한 포트폴리오입니다.
 
