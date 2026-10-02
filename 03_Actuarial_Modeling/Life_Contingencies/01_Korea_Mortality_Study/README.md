@@ -86,10 +86,35 @@ python src/fetch_kosis_full.py
 ## 분석 순서
 
 1. KOSIS 2024 전체 0~99세 qx 검증 — 완료
-2. qx → px 및 생존확률 계산
-3. KIDI 공개 연령과 qx 비교
+2. qx → px → lx / dx 및 10년·20년 생존확률 계산 — 완료
+3. KIDI 공개 연령과 qx 비교 — 50~95세 5세 간격 완료
 4. 가입연령별 10년·20년 정기보험 Pricing
 5. 사망률 ±10%, 금리 ±100bp 민감도 분석
+
+## 생명표와 생존확률 실행
+
+프로젝트 폴더의 Windows PowerShell에서 Python 3.10 이상으로 실행합니다.
+외부 패키지나 API 인증키는 필요하지 않습니다.
+
+```powershell
+py -3.10 src/build_life_table.py
+```
+
+macOS / Linux에서는 `python3 src/build_life_table.py`로 실행합니다.
+
+산출물:
+- `data/processed/kosis_2024_life_table.csv`: 남녀 0~99세 200행, `year,sex,age,qx,px,lx,dx`
+- `results/survival_probability_10_20_years.csv`: 30·40·50·60세 남녀의 10년·20년 생존확률 16행
+
+남녀 각각 l0=100,000으로 시작하며, lx와 dx는 실제 관측인원이 아닌 계산상 인원입니다.
+2024년 연령별 사망확률이 유지된다고 가정하며, 사망률 개선은 반영하지 않습니다.
+100세 이상 행을 읽지 않습니다. q99로 l100은 계산할 수 있으나 q100은 가정하지 않습니다.
+
+검증을 다시 실행하려면:
+
+```powershell
+py -3.10 -m unittest discover -s tests -v
+```
 
 ## 완료 기준
 
