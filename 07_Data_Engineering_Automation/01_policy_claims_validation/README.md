@@ -16,7 +16,7 @@
 
 기준일은 2026-09-30이다. 계약 원본 1,000행과 보험금 원본 200행을 사용한다. 실제 보험사 자료나 개인 식별정보를 포함하지 않는 가상 데이터이며, 중복·누락·날짜·금액 점검을 연습할 수 있도록 일부 이상 항목을 넣었다.
 
-1. 제공한 `01_policy_claims_practice.xlsx`의 작업용 사본을 저장한다.
+1. [Excel 실습 파일](01_policy_claims_practice.xlsx)을 다운로드해 작업용 사본을 저장한다.
 2. [Day 1 Excel 실습 안내](docs/day01_excel.md)에 따라 중복 번호, 빈 계약번호, 연결 건수를 확인한다.
 3. `실습` 시트에 발견 행 수와 처리 의견을 기록한다.
 4. 결과를 [발견 내역 CSV](results/day01_findings.csv)에도 남겨 작업 이력을 관리한다.
@@ -27,6 +27,7 @@
 
 | 경로 | 내용 |
 |---|---|
+| [01_policy_claims_practice.xlsx](01_policy_claims_practice.xlsx) | 바로 시작하는 Excel 실습 파일 |
 | [data/policies_raw.csv](data/policies_raw.csv) | 계약 원본 1,000행 |
 | [data/claims_raw.csv](data/claims_raw.csv) | 보험금 원본 200행 |
 | [docs/day01_excel.md](docs/day01_excel.md) | 첫 실습 절차와 수식 |
