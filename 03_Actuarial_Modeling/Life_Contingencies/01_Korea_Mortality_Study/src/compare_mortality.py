@@ -4,7 +4,7 @@ import csv
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-KOSIS = ROOT / "data" / "raw" / "kosis_2024_qx_age50plus.csv"
+KOSIS = ROOT / "data" / "processed" / "kosis_2024_complete_life_table_qx.csv"
 KIDI = ROOT / "data" / "raw" / "kidi_9th_experience_sample.csv"
 OUT = ROOT / "results" / "kidi9_vs_kosis2024_age50_95.csv"
 
@@ -13,9 +13,7 @@ def load_kosis():
     out = {}
     with KOSIS.open(encoding="utf-8", newline="") as f:
         for row in csv.DictReader(f):
-            if row["age_label"].endswith("+"):
-                continue
-            out[(row["sex"], int(row["age_label"]))] = float(row["qx"])
+            out[(row["sex"], int(row["age"]))] = float(row["qx"])
     return out
 
 
