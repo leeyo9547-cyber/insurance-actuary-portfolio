@@ -124,20 +124,24 @@ def main() -> None:
 
     out_path = PROCESSED_DIR / "kosis_2024_complete_life_table_qx.csv"
     with out_path.open("w", encoding="utf-8", newline="") as f:
-        fieldnames = ["source", "table_id", "year", "sex", "age", "qx"]
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        fieldnames = ["year", "sex", "age", "qx"]
+        writer = csv.DictWriter(f, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
-        for row in sorted(exact, key=lambda x: (x["sex"], x["age"])):
-            writer.writerow({k: row[k] for k in fieldnames})
+        for row in sorted(exact, key=lambda x: (x["sex"] != "M", x["age"])):
+            writer.writerow({**{k: row[k] for k in fieldnames}, "qx": f"{row['qx']:.5f}"})
 
     terminal = [row for row in normalized if row["open_ended"]]
     if terminal:
         terminal_path = PROCESSED_DIR / "kosis_2024_terminal_open_age.csv"
         with terminal_path.open("w", encoding="utf-8", newline="") as f:
-            fieldnames = ["source", "table_id", "year", "sex", "age", "qx", "open_ended"]
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            fieldnames = ["year", "sex", "age", "qx"]
+            writer = csv.DictWriter(f, fieldnames=fieldnames, lineterminator="\n")
             writer.writeheader()
-            writer.writerows(terminal)
+            for row in sorted(terminal, key=lambda x: x["sex"] != "M"):
+                writer.writerow({
+                    "year": row["year"], "sex": row["sex"],
+                    "age": "100+", "qx": f"{row['qx']:.5f}",
+                })
 
     print(f"raw: {raw_path}")
     print(f"processed: {out_path}")
