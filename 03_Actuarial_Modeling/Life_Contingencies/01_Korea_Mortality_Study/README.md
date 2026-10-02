@@ -19,6 +19,8 @@
 - 기준연도: 2024
 - 분석 기준 연령: 0~99세 exact age
 - 역할: 생존확률, Pricing, Valuation, 민감도 분석의 기준 mortality table
+- 현재 기준 파일: `data/processed/kosis_2024_complete_life_table_qx.csv`
+- 검증 결과: 남녀 각각 0~99세 100행, 총 200행
 
 ### Benchmark — KIDI
 - 기관: 보험개발원
@@ -26,20 +28,30 @@
 - 역할: 동일 연령 qx 비교용 benchmark
 - 공개 예시는 5세 간격이므로 KIDI 값만으로 1세별 Pricing을 수행하지 않는다.
 
-## 중요: 현재 부분집합 파일
+## 원자료 검증
 
-`data/raw/kosis_2024_qx_age50plus.csv`는 공식 2024 완전생명표에서 먼저 검증한
-50세 이상 부분집합입니다. 프로젝트의 최종 기준 데이터가 아닙니다.
+KOSIS에서 내려받은 2024 완전생명표 CSV를 기준으로 다음을 확인했습니다.
 
-최종 기준 파일은 KOSIS OpenAPI에서 전체 표를 수집한 뒤 생성되는:
+- 연령: 0세~99세 + 100세이상
+- 성별 사망확률, 생존자, 사망자, 기대여명 포함
+- 0세 기대여명: 전체 83.7년, 남자 80.8년, 여자 86.6년
+- 60세 기대여명: 남자 23.7년, 여자 28.4년
+- `lx × qx ≈ dx`, `lx - dx ≈ l(x+1)` 관계가 반올림 오차 범위에서 성립
+- 기존 50~99세 검증값과 업로드 원자료의 남녀 qx가 전부 일치
 
-`data/processed/kosis_2024_complete_life_table_qx.csv`
+기존 `kosis_2024_qx_age50plus.csv` 부분집합은 제거했습니다.
 
-입니다. 이 파일은 남녀 각각 0~99세, 총 200개 qx 행을 가져야 합니다.
+## 100세이상 처리
 
-## KOSIS 전체표 수집
+KOSIS의 `100세이상` 행은 개방연령구간입니다.
+따라서 exact age 100의 1년 사망확률로 사용하지 않습니다.
 
-KOSIS OpenAPI 인증키가 필요합니다.
+별도 파일:
+`data/processed/kosis_2024_terminal_open_age.csv`
+
+## KOSIS 재현 수집
+
+전체 표를 API로 다시 생성하려면 KOSIS OpenAPI 인증키를 사용할 수 있습니다.
 
 ```bash
 pip install pykosis
@@ -47,37 +59,24 @@ export KOSIS_API_KEY="발급받은-인증키"
 python src/fetch_kosis_full.py
 ```
 
-스크립트는:
-
-1. KOSIS `101 / DT_1B42`의 2024 자료를 API로 요청
-2. 응답 원본을 `data/raw/`에 JSON으로 보존
-3. 0~99세 남녀 qx를 표준화
-4. 정확히 200행이 존재하는지 검증
-5. `data/processed/kosis_2024_complete_life_table_qx.csv` 생성
-
-을 수행합니다.
-
-100+ 개방연령구간은 exact age 100의 1년 qx로 취급하지 않고 별도 저장합니다.
-
 ## 데이터 원칙
 
 - 실제 개인 계약자료나 개인정보는 사용하지 않는다.
 - 공식 기관이 공개한 집계·참조자료만 사용한다.
-- 원자료는 수정하지 않고 raw/에 보존한다.
 - 변환 과정과 가정은 docs/에 남긴다.
 - KOSIS와 KIDI의 모집단·기준시점이 다르므로 두 사망률을 한 계산 basis로 혼합하지 않는다.
 
 ## 디렉터리
 
-- data/raw/: 공식 API 응답 및 검증용 원자료
-- data/processed/: 분석용 표준화 데이터
+- data/raw/: KIDI 공개 예시 및 향후 API 원본
+- data/processed/: 검증·표준화된 KOSIS 계산용 데이터
 - docs/: 출처, 정의, 가정, 분석 방법
 - src/: 수집·정제·계산 코드
 - results/: 비교표, Pricing 및 민감도 결과
 
 ## 분석 순서
 
-1. KOSIS 2024 전체 0~99세 qx 수집
+1. KOSIS 2024 전체 0~99세 qx 검증 — 완료
 2. qx → px 및 생존확률 계산
 3. KIDI 공개 연령과 qx 비교
 4. 가입연령별 10년·20년 정기보험 Pricing
@@ -85,7 +84,7 @@ python src/fetch_kosis_full.py
 
 ## 완료 기준
 
-- KOSIS 2024 남녀 0~99세 qx 200행을 공식 API에서 재현 가능하게 생성한다.
+- KOSIS 2024 남녀 0~99세 qx 200행을 재현 가능하게 관리한다.
 - qx, px, lx, n년 생존확률을 계산한다.
 - 국민 생명표와 보험가입자 경험 사망률의 차이를 연령·성별로 설명한다.
 - 최소 하나의 정기보험 예제로 순보험료를 계산한다.
